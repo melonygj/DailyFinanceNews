@@ -1,6 +1,8 @@
 package com.example.dailyfinancenews.ui.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,10 +17,10 @@ fun BottomNavBar(
     modifier: Modifier = Modifier
 ) {
     val items = listOf(
-        NavItem("首页", androidx.compose.material.icons.Icons.Default.Home, 0),
-        NavItem("快讯", androidx.compose.material.icons.Icons.Default.FlashOn, 1),
-        NavItem("专题", androidx.compose.material.icons.Icons.Default.Topic, 2),
-        NavItem("我的", androidx.compose.material.icons.Icons.Default.Person, 3)
+        NavItem("首页", Icons.Default.Home, 0),
+        NavItem("快讯", Icons.Default.FlashOn, 1),
+        NavItem("专题", Icons.Default.Topic, 2),
+        NavItem("我的", Icons.Default.Person, 3)
     )
     
     NavigationBar(
