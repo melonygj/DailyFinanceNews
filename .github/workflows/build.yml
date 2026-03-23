@@ -1,0 +1,67 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+    
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+    
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+    
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew || true
+    
+    - name: Build Debug APK
+      run: ./gradlew assembleDebug --no-daemon || gradle assembleDebug --no-daemon
+    
+    - name: Upload Debug APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: DailyFinanceNews-debug
+        path: app/build/outputs/apk/debug/app-debug.apk
+    
+    - name: Create Release
+      if: github.event_name == 'workflow_dispatch'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: app/build/outputs/apk/debug/app-debug.apk
+        tag_name: v1.0.${{ github.run_number }}
+        name: DailyFinanceNews v1.0.${{ github.run_number }}
+        body: |
+          ## 每日财经热点 App
+          
+          ### 功能
+          - 📰 每日财经热点汇总
+          - ⚡ 实时财经快讯
+          - 📊 专题追踪
+          - ⭐ 收藏功能
+          - 🌙 夜间模式
+          - 📢 定时推送
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
